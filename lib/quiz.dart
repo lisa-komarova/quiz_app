@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:quiz_app/data/questions.dart';
 import 'package:quiz_app/questions_screen.dart';
 import 'package:quiz_app/start_screen.dart';
 
@@ -12,7 +13,18 @@ class QuizApp extends StatefulWidget {
 }
 
 class _QuizAppState extends State<QuizApp> {
+  List<String> answeredQuestions = [];
   late Widget activeScreen;
+
+  void chooseAnswer(String answer) {
+    answeredQuestions.add(answer);
+    if (answeredQuestions.length == questions.length) {
+      setState(() {
+        answeredQuestions = [];
+        activeScreen = StartScreen(startQuiz);
+      });
+    }
+  }
 
   @override
   void initState() {
@@ -22,7 +34,9 @@ class _QuizAppState extends State<QuizApp> {
 
   void startQuiz() {
     setState(() {
-      activeScreen = const QuestionsScreen();
+      activeScreen = QuestionsScreen(
+        chooseAnswer: chooseAnswer,
+      );
     });
   }
 
@@ -34,7 +48,14 @@ class _QuizAppState extends State<QuizApp> {
           backgroundColor: Colors.deepPurple,
         ),
         home: Scaffold(
-          body: activeScreen,
+          body: Container(
+              decoration: BoxDecoration(
+                  gradient: LinearGradient(
+                colors: [Colors.deepPurple, Colors.purple.shade200],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              )),
+              child: activeScreen),
         ));
   }
 }
